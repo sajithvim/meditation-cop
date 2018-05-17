@@ -1,10 +1,15 @@
 from chalice import Chalice
+import requests
 
 app = Chalice(app_name='meditation-cop')
 
 
 @app.route('/')
 def index():
+    headers = {'Content-type': 'application/json'}
+    print(headers)
+    r = requests.post("https://hooks.slack.com/services/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", json={"text":"Automated message : Sound-cloud url goes here"}, headers=headers)
+    print(r)
     return {'hello': 'world'}
 
 
