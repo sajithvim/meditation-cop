@@ -7,6 +7,16 @@
       "role_name": "meditation-cop-dev"
     },
     {
+      "name": "invoke_scheduler",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:ap-southeast-2:011034713097:function:meditation-cop-dev-invoke_scheduler"
+    },
+    {
+      "name": "invoke_scheduler-event",
+      "resource_type": "cloudwatch_event",
+      "rule_name": "meditation-cop-dev-invoke_scheduler-event"
+    },
+    {
       "name": "api_handler",
       "resource_type": "lambda_function",
       "lambda_arn": "arn:aws:lambda:ap-southeast-2:011034713097:function:meditation-cop-dev"
