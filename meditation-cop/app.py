@@ -157,15 +157,12 @@ def get_random_clip_url():
 
 def get_sountract_data():
     sound_map = [
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/focusing-thought",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/re-energise",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/the-original-relationship",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/the-power-of-love",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/home-sweet-home",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/recharging",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/source-of-peace",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/mental-oxygen",
-        "https://soundcloud.com/sajith-vimukthi-weerakoon/space-for-quietness",
+        "https://myob.slack.com/files/U8WA5CRT6/FASSCB18W/just-a-minute-relaxation-space_for_quietness.mp3",
+        "https://myob.slack.com/files/U8WA5CRT6/FARNUDN5S/just-a-minute-relaxation-relaxing_my_mind.mp3",
+        "https://myob.slack.com/files/U8WA5CRT6/FAS45RAG5/just-a-minute-relaxation-relaxing.mp3",
+        "https://myob.slack.com/files/U8WA5CRT6/FASSC9HQW/just-a-minute-relaxation-mental_oxygen.mp3",
+        "https://myob.slack.com/files/U8WA5CRT6/FAS45PXB7/just-a-minute-relaxation-breathing_calm.mp3",
+        "https://myob.slack.com/files/U8WA5CRT6/FARSLHQBD/just-a-minute-relaxation-being_relaxed.mp3",
     ]
     return sound_map
 
