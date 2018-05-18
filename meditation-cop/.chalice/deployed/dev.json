@@ -3,13 +3,13 @@
     {
       "name": "default-role",
       "resource_type": "iam_role",
-      "role_arn": "arn:aws:iam::011034713097:role/meditation-cop-dev",
+      "role_arn": "arn:aws:iam::451515956712:role/meditation-cop-dev",
       "role_name": "meditation-cop-dev"
     },
     {
       "name": "invoke_scheduler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:ap-southeast-2:011034713097:function:meditation-cop-dev-invoke_scheduler"
+      "lambda_arn": "arn:aws:lambda:ap-southeast-2:451515956712:function:meditation-cop-dev-invoke_scheduler"
     },
     {
       "name": "invoke_scheduler-event",
@@ -19,13 +19,13 @@
     {
       "name": "api_handler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:ap-southeast-2:011034713097:function:meditation-cop-dev"
+      "lambda_arn": "arn:aws:lambda:ap-southeast-2:451515956712:function:meditation-cop-dev"
     },
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "ve8naoai4k",
-      "rest_api_url": "https://ve8naoai4k.execute-api.ap-southeast-2.amazonaws.com/api/"
+      "rest_api_id": "prc9kk5076",
+      "rest_api_url": "https://prc9kk5076.execute-api.ap-southeast-2.amazonaws.com/api/"
     }
   ],
   "schema_version": "2.0",

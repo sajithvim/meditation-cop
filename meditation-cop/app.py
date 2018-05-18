@@ -11,7 +11,7 @@ def invoke_api():
         request = app.current_request
         query = decode_query(request.raw_body.decode("utf-8"))
         if query is None:
-            return process_random_clip()
+            return process_help()
         return process_query(query)
     except Exception as e:
         print(e)
@@ -27,11 +27,8 @@ def invoke_scheduler(args):
 
 
 def decode_query(raw_request):
-    print(raw_request)
     starting_index = raw_request.index('&text=') + 6
-    print('starting_index', starting_index)
     ending_index = raw_request.index('&response_url')
-    print('ending_index', ending_index)
     return raw_request[starting_index:ending_index]
 
 
@@ -40,32 +37,40 @@ def process_query(query):
         "help": process_help,
         "minute": process_minute,
         "schedule": process_schedule,
+        "introduction": process_introduction,
+        "break": process_break,
     }
     query_words = query.split()
     if query_words is None or len(query_words) < 1:
-        return process_random_clip()
+        return process_help()
     runnable_function = functions_map.get(query_words[0])
     if runnable_function is None:
-        return process_random_clip()
+        return process_help()
     return runnable_function(query)
 
 
-def process_help(query):
-    help_text = {
-        "response_type": "in_channel",
-        "text": "*schedule* : helps you to schedule a meditation session \n *minute* : Sets your environment for one minute meditation \n"
-    }
-    return generate_response(help_text)
+def process_break():
+    url = "https://myob.slack.com/files/U8WA5CRT6/FAR9EPPEU/Mini_Break_Reminder"
+
+    return generate_response(get_multimedial_url(url, "Take a break"))
 
 
-def process_minute(query):
-    item, url = get_random_clip_url()
+def process_introduction(query):
+    url = "https://www.youtube.com/watch?v=w6T02g5hnT4"
+    response_content = get_multimedial_url(url, "Introduction to meditation")
+    return generate_response(response_content)
+
+
+def get_multimedial_url(url, title):
     response_content = {
+        "parse": "full",
         "response_type": "in_channel",
+        "unfurl_media": True,
+        "unfurl_links": True,
         "text": url,
         "attachments": [
             {
-                "title": item + " music for meditation",
+                "title": title,
                 "image_url": url,
                 "thumb_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPgFSdJB9qPd87KHD_4sIeoyLZiqhdGcuTvA7bjoGMC91EUuAB",
                 "fields": [
@@ -75,7 +80,37 @@ def process_minute(query):
                         "short": False
                     }
                 ],
-                "text": "Sample material tp aid meditation"
+                "text": ""
+            }
+        ],
+    }
+    return response_content
+
+
+def process_help(query=None):
+    help_text = {
+        "response_type": "in_channel",
+        "text": "*schedule* [interval] : helps you to schedule a meditation session. Eg: schedule 1 hour \n "
+        + "*minute* : sets your environment for one minute meditation \n"
+        + "*introduction* : introduces the meditation. A basic overview of the benefits etc."
+    }
+    return generate_response(help_text)
+
+
+def process_minute(query):
+    url = get_random_clip_url()
+    response_content = {
+        "parse": "full",
+        "response_type": "in_channel",
+        "unfurl_media": True,
+        "unfurl_links": True,
+        "text": url,
+        "attachments": [
+            {
+                "title": " To play the one minute meditation please click on the link above.",
+                "image_url": url,
+                # "thumb_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPgFSdJB9qPd87KHD_4sIeoyLZiqhdGcuTvA7bjoGMC91EUuAB",
+
             }
         ],
     }
@@ -85,13 +120,13 @@ def process_minute(query):
 def process_schedule(query):
     response_content = {
         "response_type": "in_channel",
-        "text": "/polly survey ",
+        "text": "/polly \"When should we hold the meeting?\" \"9am\"\"10am\" \"11am\" ",
     }
     return generate_response(response_content)
 
 
 def process_random_clip():
-    item, url = get_random_clip_url()
+    url = get_random_clip_url()
     response_content = {
         "unfurl_media": True,
         "text": url,
@@ -117,20 +152,24 @@ def get_random_clip_url():
     rand_number = random.randint(1, len(data))
     return find_rand_url(data, rand_number)
 
+# https://soundcloud.com/amr-reda-1/relax-my-mind
+
 
 def get_sountract_data():
-    sound_map = {
-        "concentration": "https://soundcloud.com/amr-reda-1/relax-my-mind",
-        "connecting": "https://soundcloud.com/amr-reda-1/relax-my-mind",
-        "relaxation": "https://soundcloud.com/amr-reda-1/relax-my-mind",
-    }
+    sound_map = [
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/focusing-thought",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/re-energise",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/the-original-relationship",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/the-power-of-love",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/home-sweet-home",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/recharging",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/source-of-peace",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/mental-oxygen",
+        "https://soundcloud.com/sajith-vimukthi-weerakoon/space-for-quietness",
+    ]
     return sound_map
 
 
 def find_rand_url(data, rand_number):
-    count = 0
-    for item, url in data.items():
-        if count == rand_number:
-            return item, url
-        count = count + 1
-    return 'concentration', data['concentration']
+    print("rand-number", rand_number)
+    return data[rand_number]
