@@ -1,4 +1,4 @@
-from chalice import Chalice, Response
+from chalice import Chalice, Response, Cron
 import requests
 import random
 
@@ -17,11 +17,15 @@ def invoke_api():
         print(e)
 
 
-@app.schedule('rate(2 minutes)')
+@app.schedule(Cron('0', '9-17/1', '?', '*', 'MON-FRI', '*'))
 def invoke_scheduler(args):
     try:
         sound_url = get_random_clip_url()
-        post_message_to_slack(sound_url)
+        text = "*How about a mini break to observe your mind, stretch your body and refocus your eyes!* \n " \
+            + "*Please see the links below on how to take a mini break:* \n https://myob.slack.com/files/U8WA5CRT6/FAR9EPPEU/Mini_Break_Reminder \n" \
+            "*and a one minute meditation:* \n" + sound_url
+        web_hook = "https://hooks.slack.com/services/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"
+        post_message_to_slack(text, web_hook)
     except Exception as e:
         print(e)
 
@@ -38,7 +42,11 @@ def process_query(query):
         "minute": process_minute,
         "schedule": process_schedule,
         "introduction": process_introduction,
+        "intro": process_introduction,
         "break": process_break,
+        "just-a-minute": process_minute,
+        "jam": process_minute,
+        "?": process_help,
     }
     query_words = query.split()
     if query_words is None or len(query_words) < 1:
@@ -49,15 +57,18 @@ def process_query(query):
     return runnable_function(query)
 
 
-def process_break():
+def process_break(query=None):
+    print("calling break")
     url = "https://myob.slack.com/files/U8WA5CRT6/FAR9EPPEU/Mini_Break_Reminder"
-
-    return generate_response(get_multimedial_url(url, "Take a break"))
+    content = get_multimedial_url(
+        url, "How about a mini break to observe your mind, stretch your body and refocus your eyes! For instructions please click on the link above.")
+    return generate_response(content)
 
 
 def process_introduction(query):
-    url = "https://www.youtube.com/watch?v=w6T02g5hnT4"
-    response_content = get_multimedial_url(url, "Introduction to meditation")
+    url = "https://myob.slack.com/files/U8WA5CRT6/FASSPQKGE/Introduction_to_Meditation"
+    response_content = get_multimedial_url(
+        url, "Please click on the link above to read the introduction to meditation.")
     return generate_response(response_content)
 
 
@@ -72,14 +83,6 @@ def get_multimedial_url(url, title):
             {
                 "title": title,
                 "image_url": url,
-                "thumb_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPgFSdJB9qPd87KHD_4sIeoyLZiqhdGcuTvA7bjoGMC91EUuAB",
-                "fields": [
-                    {
-                        "title": "Priority",
-                        "value": "High",
-                        "short": False
-                    }
-                ],
                 "text": ""
             }
         ],
@@ -88,12 +91,9 @@ def get_multimedial_url(url, title):
 
 
 def process_help(query=None):
-    help_text = {
-        "response_type": "in_channel",
-        "text": "*schedule* [interval] : helps you to schedule a meditation session. Eg: schedule 1 hour \n "
-        + "*minute* : sets your environment for one minute meditation \n"
-        + "*introduction* : introduces the meditation. A basic overview of the benefits etc."
-    }
+    help_url = "https://myob.slack.com/files/U8WA5CRT6/FAST5KUKY/Help_on_meditation"
+    help_text = get_multimedial_url(
+        help_url, "For help please click on the link above.")
     return generate_response(help_text)
 
 
@@ -107,10 +107,8 @@ def process_minute(query):
         "text": url,
         "attachments": [
             {
-                "title": " To play the one minute meditation please click on the link above.",
+                "title": " Please click on the link above to play the one minute meditation.",
                 "image_url": url,
-                # "thumb_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPgFSdJB9qPd87KHD_4sIeoyLZiqhdGcuTvA7bjoGMC91EUuAB",
-
             }
         ],
     }
@@ -141,18 +139,16 @@ def generate_response(content):
     return response
 
 
-def post_message_to_slack(content):
+def post_message_to_slack(content, web_hook):
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
-    r = requests.post("https://hooks.slack.com/services/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",
-                      json={"text": "content:" + url}, headers=headers)
+    r = requests.post(web_hook,
+                      json={"text": content}, headers=headers)
 
 
 def get_random_clip_url():
     data = get_sountract_data()
     rand_number = random.randint(1, len(data))
     return find_rand_url(data, rand_number)
-
-# https://soundcloud.com/amr-reda-1/relax-my-mind
 
 
 def get_sountract_data():
